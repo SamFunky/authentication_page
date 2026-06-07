@@ -69,9 +69,18 @@ export function createRestAuthAdapter(config: RestAuthAdapterConfig): AuthAdapte
             return response.json() as Promise<AuthSession>;
         },
 
-        async logout() {
-            throw new Error('logout - no implementation yet');
-        }
+        async logout(): Promise<void> {
+            const logoutUrl = `${baseUrl}${endpoints.logout}`;
+
+            const response = await fetch(logoutUrl, {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to logout: ${response.status}`)
+            }
+        },
 
     }
 };
