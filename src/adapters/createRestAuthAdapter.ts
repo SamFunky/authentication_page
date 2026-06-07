@@ -50,8 +50,23 @@ export function createRestAuthAdapter(config: RestAuthAdapterConfig): AuthAdapte
             return response.json() as Promise<AuthSession>;
         },
 
-        async getSession() {
-            throw new Error('getSession - no implementation yet');
+        async getSession(): Promise<AuthSession | null> {
+            const sessionUrl = `${baseUrl}${endpoints.session}`;
+
+            const response = await fetch(sessionUrl, {
+              method: 'GET',
+              headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (response.status === 401 || response.status === 404) {
+                return null;
+            }
+
+            if (!response.ok) {
+                throw new Error(`Failed to get session: ${response.status}`)
+            }
+
+            return response.json() as Promise<AuthSession>;
         },
 
         async logout() {
