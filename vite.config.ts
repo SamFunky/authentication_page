@@ -6,7 +6,11 @@ import dts from 'vite-plugin-dts';
 export default defineConfig({
   plugins: [
     react(),
-    dts({ include: ['src'] }),
+    dts({
+      tsconfigPath: './tsconfig.build.json',
+      entryRoot: 'src',
+      include: ['src/index.ts', 'src/types'],
+    }),
   ],
   build: {
     lib: {
