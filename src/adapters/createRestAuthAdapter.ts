@@ -1,5 +1,5 @@
 import type { AuthAdapter } from '../types/adapter';
-import type { AuthSession, LoginCredentials } from '../types/auth';
+import type { AuthSession, LoginCredentials, SignupData} from '../types/auth';
 
 export interface RestAuthEndpoints {
     login: string;
@@ -34,8 +34,20 @@ export function createRestAuthAdapter(config: RestAuthAdapterConfig): AuthAdapte
             return response.json() as Promise<AuthSession>;
         },
 
-        async signup() {
-            throw new Error('signup - no implementation yet');
+        async signup(data: SignupData): Promise<AuthSession> {
+            const signupUrl = `${baseUrl}${endpoints.signup}`;
+
+            const response = await fetch(signupUrl, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Signup failed: ${response.status}`)
+            }
+
+            return response.json() as Promise<AuthSession>;
         },
 
         async getSession() {
