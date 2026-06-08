@@ -1,4 +1,4 @@
-import { createContext, useState, type ReactNode } from 'react'
+import { useEffect, createContext, useState, type ReactNode } from 'react'
 import type { AuthAdapter } from '../types/adapter'
 import type { AuthUser, LoginCredentials, SignupData } from '../types/auth'
 
@@ -28,6 +28,42 @@ export function AuthProvider(props: AuthProviderProps) {
     const [error, setError] = useState<string | null>(null);
     const isAuthenticated = user !== null;
 
+    useEffect(() =>{
+        let isMounted = true;
+        
+        async function loadSession() {
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                const session = await adapter.getSession()
+
+                if (!isMounted) return;
+                
+                if (session) {
+                    setUser(session.user);
+                }
+
+            } catch (error) {
+                if (!isMounted) return;
+
+                const message = error instanceof Error ? error.message : "Session failed to load";
+                setError(message);
+
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            }
+        }
+
+        loadSession();
+
+        return () => {
+            isMounted = false;
+        }
+    }, [adapter])
+    
     const authState = {
         user,
         isAuthenticated,
