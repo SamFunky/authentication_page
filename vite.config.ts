@@ -9,7 +9,7 @@ export default defineConfig({
     dts({
       tsconfigPath: './tsconfig.build.json',
       entryRoot: 'src',
-      include: ['src/index.ts', 'src/types'],
+      include: ['src/index.ts', 'src/types', 'src/adapters', 'src/context'],
     }),
   ],
   build: {
