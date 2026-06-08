@@ -36,8 +36,20 @@ export function AuthProvider(props: AuthProviderProps) {
     };
 
     const authActions = {
-        login: async () => {
-            throw new Error("haven't implemented login yet");
+        login: async (credentials: LoginCredentials) => {
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                const session = await adapter.login(credentials);
+                setUser(session.user)
+            } catch (error) {
+                const message = error instanceof Error ? error.message : "Login Failed";
+                setError(message);
+                throw error;
+            } finally {
+                setIsLoading(false);
+            }
         },
         signup: async () => {
             throw new Error ("haven't implemented signup yet");
