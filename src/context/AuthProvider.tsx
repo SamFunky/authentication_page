@@ -67,7 +67,19 @@ export function AuthProvider(props: AuthProviderProps) {
             }
         },
         logout: async () => {
-            throw new Error ("haven't implemented logout yet");
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                await adapter.logout();
+                setUser(null);
+            } catch (error) {
+                const message = error instanceof Error ? error.message : "Logout failed"
+                setError(message);
+                throw error;
+            } finally {
+                setIsLoading(false);
+            }
         }
     };
 
